@@ -7,4 +7,5 @@ import com.emerchantpay.backend.domain.transaction.Transaction;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+	void deleteByTimestampLessThan(long timestamp);
 }

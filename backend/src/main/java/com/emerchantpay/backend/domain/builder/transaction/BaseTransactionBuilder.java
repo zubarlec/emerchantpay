@@ -35,4 +35,12 @@ public abstract class BaseTransactionBuilder<T extends Transaction> extends Base
 		result.setMerchant(merchant);
 		return this;
 	}
+
+	/**
+	 * Use only for unit tests
+	 */
+	public BaseTransactionBuilder<T> withTimestamp(long timestamp) {
+		result.setTimestamp(timestamp);
+		return this;
+	}
 }
