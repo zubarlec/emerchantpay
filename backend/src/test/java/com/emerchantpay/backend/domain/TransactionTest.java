@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 
 import com.emerchantpay.backend.BaseTest;
+import com.emerchantpay.backend.domain.account.Merchant;
+import com.emerchantpay.backend.domain.builder.account.MerchantBuilder;
 import com.emerchantpay.backend.domain.builder.transaction.AuthorizeTransactionBuilder;
 import com.emerchantpay.backend.domain.builder.transaction.ChargeTransactionBuilder;
 import com.emerchantpay.backend.domain.builder.transaction.RefundTransactionBuilder;
@@ -23,7 +25,8 @@ public class TransactionTest extends BaseTest {
 
 	@Test
 	void create_transactions() {
-		AuthorizeTransaction authorizeTransaction = new AuthorizeTransactionBuilder(new BigDecimal("5.5"), "test@test.com").withCustomerPhone("1234567").build();
+		Merchant merchant = new MerchantBuilder("merchant@text.com").build();
+		AuthorizeTransaction authorizeTransaction = new AuthorizeTransactionBuilder(new BigDecimal("5.5"), "test@test.com").withCustomerPhone("1234567").withMerchant(merchant).build();
 
 		assertThat(authorizeTransaction, notNullValue());
 		assertThat(authorizeTransaction.getId(), notNullValue());
@@ -32,6 +35,8 @@ public class TransactionTest extends BaseTest {
 		assertThat(authorizeTransaction.getStatus(), equalTo(TransactionStatus.TRANSACTION_APPROVED));
 		assertThat(authorizeTransaction.getCustomerEmail(), equalTo("test@test.com"));
 		assertThat(authorizeTransaction.getCustomerPhone(), equalTo("1234567"));
+		assertThat(authorizeTransaction.getMerchant(), notNullValue());
+		assertThat(authorizeTransaction.getMerchant().getId(), equalTo(merchant.getId()));
 
 		ChargeTransaction chargeTransaction = new ChargeTransactionBuilder(new BigDecimal("4.51"), "test@test.com").withReferenceTransaction(authorizeTransaction).build();
 

@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Positive;
 @Entity
 public abstract class AmountTransaction extends Transaction {
 
-	@Column(name = "amount", columnDefinition="DECIMAL(16,3)")
+	@Column(name = "amount", columnDefinition="DECIMAL(20,2)")
 	@NotNull
 	@Positive
 	private BigDecimal amount;

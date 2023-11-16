@@ -15,6 +15,9 @@ public class MerchantBuilder extends AccountBuilder<Merchant> {
 		super(email, AccountRole.ROLE_MERCHANT);
 		result.setStatus(MerchantStatus.MERCHANT_ACTIVE);
 	}
+	public MerchantBuilder(Merchant other) {
+		super(other);
+	}
 
 	@Override
 	protected Merchant createNew() {

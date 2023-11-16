@@ -12,6 +12,9 @@ public abstract class AccountBuilder<T extends Account> extends BaseEntityBuilde
 		result.setEmail(email);
 		result.setRole(role);
 	}
+	protected AccountBuilder(T other) {
+		result = other;
+	}
 
 	public AccountBuilder<T> withPassword(String password) {
 		result.setPassword(password);

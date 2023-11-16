@@ -21,7 +21,7 @@ public class Merchant extends Account {
 	@Column(name = "status")
 	private MerchantStatus status;
 
-	@Column(name = "total_transaction_sum", columnDefinition="DECIMAL(16,3)")
+	@Column(name = "total_transaction_sum", columnDefinition="DECIMAL(20,2)")
 	private BigDecimal totalTransactionSum;
 
 	@OneToMany(mappedBy = "merchant", fetch = FetchType.LAZY)

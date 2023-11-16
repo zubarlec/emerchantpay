@@ -2,6 +2,7 @@ package com.emerchantpay.backend.domain.builder.transaction;
 
 import java.util.UUID;
 
+import com.emerchantpay.backend.domain.account.Merchant;
 import com.emerchantpay.backend.domain.builder.BaseEntityBuilder;
 import com.emerchantpay.backend.domain.transaction.Transaction;
 import com.emerchantpay.backend.domain.transaction.TransactionStatus;
@@ -30,5 +31,8 @@ public abstract class BaseTransactionBuilder<T extends Transaction> extends Base
 		result.setReferenceTransaction(referenceTransaction);
 		return this;
 	}
-
+	public BaseTransactionBuilder<T> withMerchant(Merchant merchant) {
+		result.setMerchant(merchant);
+		return this;
+	}
 }
