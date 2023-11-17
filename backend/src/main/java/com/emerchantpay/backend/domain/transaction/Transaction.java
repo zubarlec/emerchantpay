@@ -3,6 +3,7 @@ package com.emerchantpay.backend.domain.transaction;
 import com.emerchantpay.backend.domain.account.Merchant;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -31,6 +32,7 @@ public abstract class Transaction {
 
 	@Column(name = "customer_email", nullable = false)
 	@NotEmpty
+	@Email
 	private String customerEmail;
 
 	@Column(name = "customer_phone")
@@ -40,8 +42,9 @@ public abstract class Transaction {
 	@JoinColumn(name = "reference_id")
 	private Transaction referenceTransaction;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "merchant")
+	@NotNull
 	private Merchant merchant;
 
 	public Long getId() {

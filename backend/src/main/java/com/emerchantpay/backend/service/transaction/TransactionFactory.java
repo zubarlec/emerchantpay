@@ -13,13 +13,13 @@ public class TransactionFactory {
 
 	public Transaction createTransaction(TransactionDTO transaction, Transaction reference, Merchant merchant) {
 		BaseTransactionBuilder<?> builder = switch (transaction.getType()) {
-			case TRANSACTION_AUTHORIZE -> new AuthorizeTransactionBuilder(transaction.getAmount(), transaction.getCustomerEmail());
-			case TRANSACTION_CHARGE -> new ChargeTransactionBuilder(transaction.getAmount(), transaction.getCustomerEmail());
-			case TRANSACTION_REFUND -> new RefundTransactionBuilder(transaction.getAmount(), transaction.getCustomerEmail());
-			case TRANSACTION_REVERSAL -> new ReversalTransactionBuilder(transaction.getCustomerEmail());
+			case TRANSACTION_AUTHORIZE -> new AuthorizeTransactionBuilder(transaction.getAmount(), transaction.getCustomerEmail(), merchant);
+			case TRANSACTION_CHARGE -> new ChargeTransactionBuilder(transaction.getAmount(), transaction.getCustomerEmail(), merchant);
+			case TRANSACTION_REFUND -> new RefundTransactionBuilder(transaction.getAmount(), transaction.getCustomerEmail(), merchant);
+			case TRANSACTION_REVERSAL -> new ReversalTransactionBuilder(transaction.getCustomerEmail(), merchant);
 		};
 
-		builder.withCustomerPhone(transaction.getCustomerPhone()).withReferenceTransaction(reference).withMerchant(merchant);
+		builder.withCustomerPhone(transaction.getCustomerPhone()).withReferenceTransaction(reference);
 		if (reference != null && !reference.getStatus().isAllowReference()) {
 			builder.withStatus(TransactionStatus.TRANSACTION_ERROR);
 		}

@@ -11,12 +11,13 @@ public abstract class BaseTransactionBuilder<T extends Transaction> extends Base
 
 	protected abstract T createNew();
 
-	protected BaseTransactionBuilder(String customerEmail) {
+	protected BaseTransactionBuilder(String customerEmail, Merchant merchant) {
 		result = createNew();
 		result.setUuid(UUID.randomUUID().toString());
 		result.setTimestamp(System.currentTimeMillis());
 		result.setStatus(TransactionStatus.TRANSACTION_APPROVED);
 		result.setCustomerEmail(customerEmail);
+		result.setMerchant(merchant);
 	}
 
 	public BaseTransactionBuilder<T> withCustomerPhone(String customerPhone) {
@@ -29,10 +30,6 @@ public abstract class BaseTransactionBuilder<T extends Transaction> extends Base
 	}
 	public BaseTransactionBuilder<T> withReferenceTransaction(Transaction referenceTransaction) {
 		result.setReferenceTransaction(referenceTransaction);
-		return this;
-	}
-	public BaseTransactionBuilder<T> withMerchant(Merchant merchant) {
-		result.setMerchant(merchant);
 		return this;
 	}
 

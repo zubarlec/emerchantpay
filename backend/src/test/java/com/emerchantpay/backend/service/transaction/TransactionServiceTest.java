@@ -145,10 +145,10 @@ public class TransactionServiceTest extends BaseTest {
 
 	@Test
 	void fail_to_submit_transaction_for_invalid_reference_type() {
-		Transaction authorize = new AuthorizeTransactionBuilder(transactionDTO.getAmount(), transactionDTO.getCustomerEmail()).build();
-		Transaction charge = new ChargeTransactionBuilder(transactionDTO.getAmount(), transactionDTO.getCustomerEmail()).build();
-		Transaction refund = new RefundTransactionBuilder(transactionDTO.getAmount(), transactionDTO.getCustomerEmail()).build();
-		Transaction reversal = new ReversalTransactionBuilder(transactionDTO.getCustomerEmail()).build();
+		Transaction authorize = new AuthorizeTransactionBuilder(transactionDTO.getAmount(), transactionDTO.getCustomerEmail(), merchant).build();
+		Transaction charge = new ChargeTransactionBuilder(transactionDTO.getAmount(), transactionDTO.getCustomerEmail(), merchant).build();
+		Transaction refund = new RefundTransactionBuilder(transactionDTO.getAmount(), transactionDTO.getCustomerEmail(), merchant).build();
+		Transaction reversal = new ReversalTransactionBuilder(transactionDTO.getCustomerEmail(), merchant).build();
 
 		transactionDTO.setType(TransactionType.TRANSACTION_AUTHORIZE);
 		List.of(authorize, charge, refund, reversal).forEach(t -> {
@@ -177,7 +177,7 @@ public class TransactionServiceTest extends BaseTest {
 
 	@Test
 	void submit_transaction_for_invalid_reference_status() {
-		Transaction authorize = new AuthorizeTransactionBuilder(transactionDTO.getAmount(), transactionDTO.getCustomerEmail()).build();
+		Transaction authorize = new AuthorizeTransactionBuilder(transactionDTO.getAmount(), transactionDTO.getCustomerEmail(), merchant).build();
 
 		transactionDTO.setReferenceId(authorize.getId());
 		List.of(TransactionStatus.TRANSACTION_ERROR, TransactionStatus.TRANSACTION_REVERSED).forEach(status -> {

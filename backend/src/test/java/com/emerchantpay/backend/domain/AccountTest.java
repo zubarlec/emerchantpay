@@ -53,5 +53,9 @@ public class AccountTest extends BaseTest {
 		e = assertThrows(ConstraintViolationException.class, () -> new AdminBuilder("").build());
 		assertThat(e.getConstraintViolations(), hasSize(1));
 		assertThat(e.getConstraintViolations().iterator().next().getPropertyPath().toString(), equalTo("email"));
+
+		e = assertThrows(ConstraintViolationException.class, () -> new AdminBuilder("invalid-email").build());
+		assertThat(e.getConstraintViolations(), hasSize(1));
+		assertThat(e.getConstraintViolations().iterator().next().getPropertyPath().toString(), equalTo("email"));
 	}
 }

@@ -1,6 +1,7 @@
 package com.emerchantpay.backend.domain.account;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -16,6 +17,7 @@ public abstract class Account {
 
 	@Column(name = "email", unique = true, nullable = false)
 	@NotEmpty
+	@Email
 	private String email;
 
 	@Column(name = "password")

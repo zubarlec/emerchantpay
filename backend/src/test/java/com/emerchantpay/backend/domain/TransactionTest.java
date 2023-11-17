@@ -23,10 +23,16 @@ import jakarta.validation.ConstraintViolationException;
 
 public class TransactionTest extends BaseTest {
 
+	private Merchant merchant;
+
+	@Override
+	protected void init() {
+		merchant = new MerchantBuilder("merchant@text.com").build();
+	}
+
 	@Test
 	void create_transactions() {
-		Merchant merchant = new MerchantBuilder("merchant@text.com").build();
-		AuthorizeTransaction authorizeTransaction = new AuthorizeTransactionBuilder(new BigDecimal("5.5"), "test@test.com").withCustomerPhone("1234567").withMerchant(merchant).build();
+		AuthorizeTransaction authorizeTransaction = new AuthorizeTransactionBuilder(new BigDecimal("5.5"), "test@test.com", merchant).withCustomerPhone("1234567").build();
 
 		assertThat(authorizeTransaction, notNullValue());
 		assertThat(authorizeTransaction.getId(), notNullValue());
@@ -38,15 +44,15 @@ public class TransactionTest extends BaseTest {
 		assertThat(authorizeTransaction.getMerchant(), notNullValue());
 		assertThat(authorizeTransaction.getMerchant().getId(), equalTo(merchant.getId()));
 
-		ChargeTransaction chargeTransaction = new ChargeTransactionBuilder(new BigDecimal("4.51"), "test@test.com").withReferenceTransaction(authorizeTransaction).build();
+		ChargeTransaction chargeTransaction = new ChargeTransactionBuilder(new BigDecimal("4.51"), "test@test.com", merchant).withReferenceTransaction(authorizeTransaction).build();
 
 		assertThat(chargeTransaction.getReferenceTransaction(), notNullValue());
 		assertThat(chargeTransaction.getReferenceTransaction().getId(), equalTo(authorizeTransaction.getId()));
 
-		new RefundTransactionBuilder(new BigDecimal("5.52"), "test@test.com").withReferenceTransaction(chargeTransaction).build();
+		new RefundTransactionBuilder(new BigDecimal("5.52"), "test@test.com", merchant).withReferenceTransaction(chargeTransaction).build();
 
-		authorizeTransaction = new AuthorizeTransactionBuilder(new BigDecimal("7.7"), "test@test.com").build();
-		new ReversalTransactionBuilder("test@test.com").withReferenceTransaction(authorizeTransaction).build();
+		authorizeTransaction = new AuthorizeTransactionBuilder(new BigDecimal("7.7"), "test@test.com", merchant).build();
+		new ReversalTransactionBuilder("test@test.com", merchant).withReferenceTransaction(authorizeTransaction).build();
 
 		assertThat(repo.transaction.count(), equalTo(5L));
 		assertThat(repo.authorizeTransaction.count(), equalTo(2L));
@@ -57,24 +63,33 @@ public class TransactionTest extends BaseTest {
 
 	@Test
 	void fail_to_create_invalid_transaction() {
-		ConstraintViolationException e = assertThrows(ConstraintViolationException.class, () -> new AuthorizeTransactionBuilder(new BigDecimal("0"), "test@test.com").build());
+		ConstraintViolationException e = assertThrows(ConstraintViolationException.class, () -> new AuthorizeTransactionBuilder(new BigDecimal("0"), "test@test.com", merchant).build());
 		assertThat(e.getConstraintViolations(), hasSize(1));
 		assertThat(e.getConstraintViolations().iterator().next().getPropertyPath().toString(), equalTo("amount"));
 
-		e = assertThrows(ConstraintViolationException.class, () -> new AuthorizeTransactionBuilder(null, "test@test.com").build());
+		e = assertThrows(ConstraintViolationException.class, () -> new AuthorizeTransactionBuilder(null, "test@test.com", merchant).build());
 		assertThat(e.getConstraintViolations(), hasSize(1));
 		assertThat(e.getConstraintViolations().iterator().next().getPropertyPath().toString(), equalTo("amount"));
 
-		e = assertThrows(ConstraintViolationException.class, () -> new AuthorizeTransactionBuilder(new BigDecimal("0.01"), null).build());
+		e = assertThrows(ConstraintViolationException.class, () -> new AuthorizeTransactionBuilder(new BigDecimal("0.01"), null, merchant).build());
 		assertThat(e.getConstraintViolations(), hasSize(1));
 		assertThat(e.getConstraintViolations().iterator().next().getPropertyPath().toString(), equalTo("customerEmail"));
 
-		e = assertThrows(ConstraintViolationException.class, () -> new AuthorizeTransactionBuilder(new BigDecimal("0.01"), "").build());
+		e = assertThrows(ConstraintViolationException.class, () -> new AuthorizeTransactionBuilder(new BigDecimal("0.01"), "", merchant).build());
 		assertThat(e.getConstraintViolations(), hasSize(1));
 		assertThat(e.getConstraintViolations().iterator().next().getPropertyPath().toString(), equalTo("customerEmail"));
 
-		e = assertThrows(ConstraintViolationException.class, () -> new AuthorizeTransactionBuilder(new BigDecimal("0.01"), "test@test.com").withStatus(null).build());
+		e = assertThrows(ConstraintViolationException.class, () -> new AuthorizeTransactionBuilder(new BigDecimal("0.01"), "invalid-email", merchant).build());
+		assertThat(e.getConstraintViolations(), hasSize(1));
+		assertThat(e.getConstraintViolations().iterator().next().getPropertyPath().toString(), equalTo("customerEmail"));
+
+		e = assertThrows(ConstraintViolationException.class, () -> new AuthorizeTransactionBuilder(new BigDecimal("0.01"), "test@test.com", merchant).withStatus(null).build());
 		assertThat(e.getConstraintViolations(), hasSize(1));
 		assertThat(e.getConstraintViolations().iterator().next().getPropertyPath().toString(), equalTo("status"));
+
+		e = assertThrows(ConstraintViolationException.class, () -> new AuthorizeTransactionBuilder(new BigDecimal("0.01"), "test@test.com", null).build());
+		assertThat(e.getConstraintViolations(), hasSize(1));
+		assertThat(e.getConstraintViolations().iterator().next().getPropertyPath().toString(), equalTo("merchant"));
+
 	}
 }

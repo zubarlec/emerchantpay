@@ -7,4 +7,5 @@ import com.emerchantpay.backend.domain.account.Account;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
+	Account findByEmailAllIgnoreCase(String email);
 }
