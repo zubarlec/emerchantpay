@@ -1,0 +1,4 @@
+type,email,password,name,description,status
+admin,admin@test.com,adminpass,,,
+merchant,merchant@test.com,merchantpass,Merchant Name,Some merchant description,MERCHANT_ACTIVE
+merchant,merchant.inactive@test.com,merchantpass,Inactive Merchant,Inactive description,MERCHANT_INACTIVE

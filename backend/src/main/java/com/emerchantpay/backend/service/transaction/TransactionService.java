@@ -11,8 +11,8 @@ import com.emerchantpay.backend.dto.transaction.TransactionDTO;
 import com.emerchantpay.backend.repository.RepositoryRegistry;
 import com.emerchantpay.backend.service.account.MerchantService;
 import com.emerchantpay.backend.service.exception.EntityNotFoundException;
-import com.emerchantpay.backend.service.exception.InvalidMerchant;
-import com.emerchantpay.backend.service.exception.InvalidTransaction;
+import com.emerchantpay.backend.service.exception.InvalidMerchantException;
+import com.emerchantpay.backend.service.exception.InvalidTransactionException;
 
 @Service
 public class TransactionService {
@@ -28,13 +28,13 @@ public class TransactionService {
 	}
 
 	@Transactional
-	public TransactionDTO submitTransaction(TransactionDTO transactionDTO, Merchant merchant) throws EntityNotFoundException, InvalidTransaction, InvalidMerchant {
+	public TransactionDTO submitTransaction(TransactionDTO transactionDTO, Merchant merchant) throws EntityNotFoundException, InvalidTransactionException, InvalidMerchantException {
 		if (transactionDTO.getType() == null || merchant == null) {
-			throw new InvalidTransaction();
+			throw new InvalidTransactionException();
 		}
 
 		if (merchant.getStatus() != MerchantStatus.MERCHANT_ACTIVE) {
-			throw new InvalidMerchant();
+			throw new InvalidMerchantException();
 		}
 
 		Transaction referenceTransaction = null;
@@ -43,7 +43,7 @@ public class TransactionService {
 		}
 
 		if (!transactionDTO.getType().canReference(TransactionType.getType(referenceTransaction))) {
-			throw new InvalidTransaction();
+			throw new InvalidTransactionException();
 		}
 
 		Transaction result = transactionFactory.createTransaction(transactionDTO, referenceTransaction, merchant);

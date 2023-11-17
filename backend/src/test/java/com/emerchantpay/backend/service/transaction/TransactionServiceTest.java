@@ -20,8 +20,8 @@ import com.emerchantpay.backend.domain.transaction.Transaction;
 import com.emerchantpay.backend.domain.transaction.TransactionStatus;
 import com.emerchantpay.backend.domain.transaction.TransactionType;
 import com.emerchantpay.backend.dto.transaction.TransactionDTO;
-import com.emerchantpay.backend.service.exception.InvalidMerchant;
-import com.emerchantpay.backend.service.exception.InvalidTransaction;
+import com.emerchantpay.backend.service.exception.InvalidMerchantException;
+import com.emerchantpay.backend.service.exception.InvalidTransactionException;
 
 public class TransactionServiceTest extends BaseTest {
 
@@ -114,7 +114,7 @@ public class TransactionServiceTest extends BaseTest {
 	@Test
 	void fail_to_submit_transaction_no_merchant() {
 		transactionDTO.setType(TransactionType.TRANSACTION_AUTHORIZE);
-		assertThrows(InvalidTransaction.class, () -> transactionService.submitTransaction(transactionDTO, null));
+		assertThrows(InvalidTransactionException.class, () -> transactionService.submitTransaction(transactionDTO, null));
 	}
 
 	@Test
@@ -122,25 +122,25 @@ public class TransactionServiceTest extends BaseTest {
 		merchant = new MerchantBuilder(merchant).withStatus(MerchantStatus.MERCHANT_INACTIVE).build();
 
 		transactionDTO.setType(TransactionType.TRANSACTION_AUTHORIZE);
-		assertThrows(InvalidMerchant.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
+		assertThrows(InvalidMerchantException.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
 	}
 
 	@Test
 	void fail_to_submit_transaction_no_type() {
-		assertThrows(InvalidTransaction.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
+		assertThrows(InvalidTransactionException.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
 	}
 
 	@Test
 	void fail_to_submit_transaction_no_reference() {
 
 		transactionDTO.setType(TransactionType.TRANSACTION_CHARGE);
-		assertThrows(InvalidTransaction.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
+		assertThrows(InvalidTransactionException.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
 
 		transactionDTO.setType(TransactionType.TRANSACTION_REFUND);
-		assertThrows(InvalidTransaction.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
+		assertThrows(InvalidTransactionException.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
 
 		transactionDTO.setType(TransactionType.TRANSACTION_REVERSAL);
-		assertThrows(InvalidTransaction.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
+		assertThrows(InvalidTransactionException.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
 	}
 
 	@Test
@@ -153,25 +153,25 @@ public class TransactionServiceTest extends BaseTest {
 		transactionDTO.setType(TransactionType.TRANSACTION_AUTHORIZE);
 		List.of(authorize, charge, refund, reversal).forEach(t -> {
 			transactionDTO.setReferenceId(t.getId());
-			assertThrows(InvalidTransaction.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
+			assertThrows(InvalidTransactionException.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
 		});
 
 		transactionDTO.setType(TransactionType.TRANSACTION_CHARGE);
 		List.of(charge, refund, reversal).forEach(t -> {
 			transactionDTO.setReferenceId(t.getId());
-			assertThrows(InvalidTransaction.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
+			assertThrows(InvalidTransactionException.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
 		});
 
 		transactionDTO.setType(TransactionType.TRANSACTION_REFUND);
 		List.of(authorize, refund, reversal).forEach(t -> {
 			transactionDTO.setReferenceId(t.getId());
-			assertThrows(InvalidTransaction.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
+			assertThrows(InvalidTransactionException.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
 		});
 
 		transactionDTO.setType(TransactionType.TRANSACTION_REVERSAL);
 		List.of(charge, refund, reversal).forEach(t -> {
 			transactionDTO.setReferenceId(t.getId());
-			assertThrows(InvalidTransaction.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
+			assertThrows(InvalidTransactionException.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
 		});
 	}
 

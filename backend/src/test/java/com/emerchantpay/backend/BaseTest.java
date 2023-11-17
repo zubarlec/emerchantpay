@@ -10,6 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.TestPropertySources;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @TestPropertySources({
 	@TestPropertySource("classpath:test.properties")
 })
+@ActiveProfiles({"test"})
 public abstract class BaseTest {
 
 	@PersistenceContext
