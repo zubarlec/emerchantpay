@@ -1,11 +1,14 @@
 package com.emerchantpay.backend.dto.transaction;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import com.emerchantpay.backend.domain.transaction.AmountTransaction;
 import com.emerchantpay.backend.domain.transaction.Transaction;
 import com.emerchantpay.backend.domain.transaction.TransactionStatus;
 import com.emerchantpay.backend.domain.transaction.TransactionType;
+import com.emerchantpay.backend.dto.account.MerchantDTO;
+import com.emerchantpay.backend.util.JsonUtil;
 
 public class TransactionDTO {
 	private Long id;
@@ -17,6 +20,8 @@ public class TransactionDTO {
 	private Long referenceId;
 	private BigDecimal amount;
 	private TransactionType type;
+
+	private MerchantDTO merchant;
 
 	public TransactionDTO() {
 
@@ -34,10 +39,38 @@ public class TransactionDTO {
 		customerPhone = transaction.getCustomerPhone();
 		referenceId = transaction.getReferenceTransaction() == null ? null : transaction.getReferenceTransaction().getId();
 		type = TransactionType.getType(transaction);
+		merchant = new MerchantDTO(transaction.getMerchant());
 
 		if (transaction instanceof AmountTransaction) {
 			amount = ((AmountTransaction) transaction).getAmount();
 		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		TransactionDTO that = (TransactionDTO) o;
+		return timestamp == that.timestamp
+			&& Objects.equals(id, that.id)
+			&& Objects.equals(uuid, that.uuid)
+			&& status == that.status
+			&& Objects.equals(customerEmail, that.customerEmail)
+			&& Objects.equals(customerPhone, that.customerPhone)
+			&& Objects.equals(referenceId, that.referenceId)
+			&& Objects.equals(amount, that.amount)
+			&& type == that.type
+			&& Objects.equals(merchant, that.merchant);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, uuid, status, timestamp, customerEmail, customerPhone, referenceId, amount, type, merchant);
+	}
+
+	@Override
+	public String toString() {
+		return JsonUtil.toJson(this);
 	}
 
 	public Long getId() {
@@ -110,5 +143,13 @@ public class TransactionDTO {
 
 	public void setType(TransactionType type) {
 		this.type = type;
+	}
+
+	public MerchantDTO getMerchant() {
+		return merchant;
+	}
+
+	public void setMerchant(MerchantDTO merchant) {
+		this.merchant = merchant;
 	}
 }

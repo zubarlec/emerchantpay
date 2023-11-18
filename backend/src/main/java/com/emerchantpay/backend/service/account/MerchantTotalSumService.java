@@ -9,7 +9,7 @@ import com.emerchantpay.backend.domain.account.Merchant;
 import com.emerchantpay.backend.domain.builder.account.MerchantBuilder;
 
 @Service
-public class MerchantService {
+public class MerchantTotalSumService {
 
 	public void addToTotalSum(Merchant merchant, BigDecimal value) {
 		updateTotalSum(merchant, value, BigDecimal::add);

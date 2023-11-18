@@ -1,6 +1,7 @@
 package com.emerchantpay.backend.dto.account;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import com.emerchantpay.backend.domain.account.Merchant;
 import com.emerchantpay.backend.domain.account.MerchantStatus;
@@ -24,6 +25,22 @@ public class MerchantDTO extends AccountDTO {
 		description = merchant.getDescription();
 		status = merchant.getStatus();
 		totalTransactionSum = merchant.getTotalTransactionSum();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		MerchantDTO that = (MerchantDTO) o;
+		return Objects.equals(name, that.name)
+			&& Objects.equals(description, that.description)
+			&& status == that.status
+			&& Objects.equals(totalTransactionSum, that.totalTransactionSum);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, description, status, totalTransactionSum);
 	}
 
 	public String getName() {

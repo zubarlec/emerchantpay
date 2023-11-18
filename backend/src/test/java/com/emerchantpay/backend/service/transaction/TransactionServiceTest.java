@@ -14,11 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.emerchantpay.backend.BaseTest;
 import com.emerchantpay.backend.domain.account.Merchant;
 import com.emerchantpay.backend.domain.account.MerchantStatus;
+import com.emerchantpay.backend.domain.builder.account.AdminBuilder;
 import com.emerchantpay.backend.domain.builder.account.MerchantBuilder;
 import com.emerchantpay.backend.domain.builder.transaction.*;
 import com.emerchantpay.backend.domain.transaction.Transaction;
 import com.emerchantpay.backend.domain.transaction.TransactionStatus;
 import com.emerchantpay.backend.domain.transaction.TransactionType;
+import com.emerchantpay.backend.dto.account.MerchantDTO;
 import com.emerchantpay.backend.dto.transaction.TransactionDTO;
 import com.emerchantpay.backend.service.exception.InvalidMerchantException;
 import com.emerchantpay.backend.service.exception.InvalidTransactionException;
@@ -112,9 +114,25 @@ public class TransactionServiceTest extends BaseTest {
 	}
 
 	@Test
+	void submit_authorize_transaction_by_admin() throws Exception {
+		transactionDTO.setType(TransactionType.TRANSACTION_AUTHORIZE);
+		transactionDTO.setMerchant(new MerchantDTO(merchant));
+
+		TransactionDTO result = transactionService.submitTransaction(transactionDTO, new AdminBuilder("admin@test.com").build());
+
+		assertThat(result, notNullValue());
+		assertThat(result.getCustomerEmail(), equalTo(transactionDTO.getCustomerEmail()));
+		assertThat(result.getAmount(), equalTo(transactionDTO.getAmount()));
+		assertThat(result.getType(), equalTo(transactionDTO.getType()));
+		assertThat(result.getStatus(), equalTo(TransactionStatus.TRANSACTION_APPROVED));
+		assertThat(result.getMerchant(), notNullValue());
+		assertThat(result.getMerchant().getId(), equalTo(merchant.getId()));
+	}
+
+	@Test
 	void fail_to_submit_transaction_no_merchant() {
 		transactionDTO.setType(TransactionType.TRANSACTION_AUTHORIZE);
-		assertThrows(InvalidTransactionException.class, () -> transactionService.submitTransaction(transactionDTO, null));
+		assertThrows(InvalidMerchantException.class, () -> transactionService.submitTransaction(transactionDTO, null));
 	}
 
 	@Test
@@ -123,6 +141,12 @@ public class TransactionServiceTest extends BaseTest {
 
 		transactionDTO.setType(TransactionType.TRANSACTION_AUTHORIZE);
 		assertThrows(InvalidMerchantException.class, () -> transactionService.submitTransaction(transactionDTO, merchant));
+	}
+
+	@Test
+	void fail_to_submit_transaction_by_admin_no_merchant() {
+		transactionDTO.setType(TransactionType.TRANSACTION_AUTHORIZE);
+		assertThrows(InvalidMerchantException.class, () -> transactionService.submitTransaction(transactionDTO, new AdminBuilder("admin@test.com").build()));
 	}
 
 	@Test
@@ -190,5 +214,18 @@ public class TransactionServiceTest extends BaseTest {
 				assertThat(result.getStatus(), equalTo(TransactionStatus.TRANSACTION_ERROR));
 			});
 		});
+	}
+
+	@Test
+	void get_transactions() {
+		Transaction authorize = new AuthorizeTransactionBuilder(transactionDTO.getAmount(), transactionDTO.getCustomerEmail(), merchant).build();
+		Transaction charge = new ChargeTransactionBuilder(transactionDTO.getAmount(), transactionDTO.getCustomerEmail(), merchant).build();
+		Transaction refund = new RefundTransactionBuilder(transactionDTO.getAmount(), transactionDTO.getCustomerEmail(), merchant).build();
+		Transaction reversal = new ReversalTransactionBuilder(transactionDTO.getCustomerEmail(), merchant).build();
+
+		merchant = repo.merchant.findById(merchant.getId()).orElseThrow();
+		List<TransactionDTO> result = transactionService.getTransactions(merchant);
+
+		assertThat(result, contains(new TransactionDTO(reversal), new TransactionDTO(refund), new TransactionDTO(charge), new TransactionDTO(authorize)));
 	}
 }

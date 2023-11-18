@@ -71,12 +71,12 @@ public class MerchantCrudService {
 
 	public void deleteMerchant(Long id) throws InvalidMerchantException, EntityNotFoundException {
 		if (id == null) {
-			throw new EntityNotFoundException();
+			throw new EntityNotFoundException("null merchant id");
 		}
 		try {
 			repo.merchant.deleteById(id);
 		} catch (Throwable e) {
-			throw new InvalidMerchantException();
+			throw new InvalidMerchantException(e);
 		}
 	}
 
