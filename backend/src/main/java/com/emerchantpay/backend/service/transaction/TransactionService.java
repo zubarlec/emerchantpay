@@ -54,7 +54,7 @@ public class TransactionService {
 			referenceTransaction = repo.transaction.findById(transactionDTO.getReferenceId()).orElseThrow(() -> new EntityNotFoundException("reference transaction"));
 		}
 
-		if (!transactionDTO.getType().canReference(TransactionType.getType(referenceTransaction))) {
+		if (!transactionDTO.getType().canReference(referenceTransaction != null ? referenceTransaction.getType() : null)) {
 			throw new InvalidTransactionException("Transaction type not allowed to refer the reference transaction.");
 		}
 
@@ -74,6 +74,7 @@ public class TransactionService {
 		return new TransactionDTO(result);
 	}
 
+	@Transactional
 	public List<TransactionDTO> getTransactions(Account executor) {
 		List<TransactionDTO> result;
 		if (executor instanceof Merchant) {

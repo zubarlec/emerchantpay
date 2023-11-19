@@ -1,6 +1,7 @@
 package com.emerchantpay.backend.web.error;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,8 +18,8 @@ public class ApiExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
 	@ResponseBody
-	public ErrorDTO handleNoHandlerFoundException() {
-		return new ErrorDTO("Unhandled error", ApiErrorCode.GENERAL_ERROR);
+	public ErrorDTO handleNoHandlerFoundException(Exception e) {
+		return new ErrorDTO(ApiErrorCode.GENERAL_ERROR, e);
 	}
 
 	@ExceptionHandler(DuplicateMailException.class)
@@ -48,4 +49,12 @@ public class ApiExceptionHandler {
 	public ErrorDTO handleError(InvalidTransactionException exception) {
 		return new ErrorDTO(ApiErrorCode.INVALID_INPUT_PARAMETER, exception);
 	}
+
+	@ExceptionHandler(AuthenticationException.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorDTO handleError(AuthenticationException exception) {
+		return new ErrorDTO(ApiErrorCode.BAD_CREDENTIALS, exception);
+	}
+
 }

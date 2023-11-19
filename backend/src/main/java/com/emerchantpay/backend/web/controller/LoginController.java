@@ -3,11 +3,14 @@ package com.emerchantpay.backend.web.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import com.emerchantpay.backend.domain.account.Account;
+import com.emerchantpay.backend.domain.account.Admin;
+import com.emerchantpay.backend.domain.account.Merchant;
+import com.emerchantpay.backend.dto.account.AccountDTO;
+import com.emerchantpay.backend.dto.account.AdminDTO;
+import com.emerchantpay.backend.dto.account.MerchantDTO;
 import com.emerchantpay.backend.web.dto.ValueWrapper;
 import com.emerchantpay.backend.web.security.AuthenticationService;
 
@@ -25,5 +28,17 @@ public class LoginController {
 	@PostMapping("/login")
 	public ResponseEntity<ValueWrapper<String>> login(@RequestParam("username") String username, @RequestParam("password") String password) {
 		return ResponseEntity.ok(new ValueWrapper<>(authenticationService.authenticate(username, password)));
+	}
+
+	@GetMapping("/account")
+	public ResponseEntity<AccountDTO> account() {
+		Account account = authenticationService.getAuthenticatedAccount();
+		AccountDTO result = null;
+		if (account instanceof Admin admin) {
+			result = new AdminDTO(admin);
+		} else if (account instanceof Merchant merchant) {
+			result = new MerchantDTO(merchant);
+		}
+		return ResponseEntity.ok(result);
 	}
 }

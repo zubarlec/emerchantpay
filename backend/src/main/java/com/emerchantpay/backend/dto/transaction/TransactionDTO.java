@@ -38,7 +38,7 @@ public class TransactionDTO {
 		customerEmail = transaction.getCustomerEmail();
 		customerPhone = transaction.getCustomerPhone();
 		referenceId = transaction.getReferenceTransaction() == null ? null : transaction.getReferenceTransaction().getId();
-		type = TransactionType.getType(transaction);
+		type = transaction.getType();
 		merchant = new MerchantDTO(transaction.getMerchant());
 
 		if (transaction instanceof AmountTransaction) {

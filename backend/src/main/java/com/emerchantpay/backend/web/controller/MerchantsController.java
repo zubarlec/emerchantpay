@@ -27,17 +27,22 @@ public class MerchantsController {
 	}
 
 	@GetMapping("/")
-	public ResponseEntity<ListWrapper<MerchantDTO>> getMerchants() {
+	public ResponseEntity<ListWrapper<MerchantDTO>> getAll() {
 		return ResponseEntity.ok(new ListWrapper<>(merchantCrudService.getMerchants()));
 	}
 
+	@GetMapping("/{id}")
+	public ResponseEntity<MerchantDTO> getOne(@PathVariable @NotNull Long id) throws EntityNotFoundException {
+		return ResponseEntity.ok(merchantCrudService.getMerchant(id));
+	}
+
 	@PostMapping("/")
-	public ResponseEntity<MerchantDTO> createOrUpdateMerchant(@RequestBody @NotNull UpdateMerchantRequestDTO merchantRequestDTO) throws DuplicateMailException, InvalidMerchantException {
+	public ResponseEntity<MerchantDTO> createOrUpdate(@RequestBody @NotNull UpdateMerchantRequestDTO merchantRequestDTO) throws DuplicateMailException, InvalidMerchantException {
 		return ResponseEntity.ok(merchantCrudService.createOrUpdateMerchant(merchantRequestDTO.getMerchant(), merchantRequestDTO.getPassword()));
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<ValueWrapper<Boolean>> deleteMerchant(@PathVariable @NotNull Long id) throws InvalidMerchantException, EntityNotFoundException {
+	public ResponseEntity<ValueWrapper<Boolean>> delete(@PathVariable @NotNull Long id) throws InvalidMerchantException, EntityNotFoundException {
 		merchantCrudService.deleteMerchant(id);
 		return ResponseEntity.ok(new ValueWrapper<>(true));
 	}

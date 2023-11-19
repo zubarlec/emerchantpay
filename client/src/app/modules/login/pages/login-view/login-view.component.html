@@ -1,0 +1,11 @@
+<div class="container">
+  <h2>Login</h2>
+  <div class="mb-3">
+    <input type="email" class="form-control" placeholder="Email" [formControl]="username">
+  </div>
+  <div class="mb-3">
+    <input type="password" class="form-control" placeholder="Password" [formControl]="password">
+  </div>
+  <button type="button" class="btn btn-primary" (click)="login()" [disabled]="serverCallInProgress">Login</button>
+  <div *ngIf="error" class="text-danger">{{error.reason}}</div>
+</div>

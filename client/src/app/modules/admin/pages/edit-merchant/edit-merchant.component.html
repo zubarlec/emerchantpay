@@ -1,0 +1,45 @@
+<navigation></navigation>
+
+<div class="container">
+  <div class="mb-3">Create/edit merchant</div>
+
+  <form class="row g-3">
+    <div class="col-md-4">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" class="form-control" id="email" [formControl]="email" [ngClass]="{'is-invalid': email.invalid && email.touched, 'is-valid': email.valid && email.touched}">
+      <div class="invalid-feedback">
+        Email is required.
+      </div>
+    </div>
+    <div class="col-md-4">
+      <label for="name" class="form-label">Name</label>
+      <input type="text" class="form-control" id="name" [formControl]="name">
+    </div>
+    <div class="col-md-4">
+      <label for="description" class="form-label">Description</label>
+      <input type="text" class="form-control" id="description" [formControl]="description">
+    </div>
+
+    <div class="col-md-3">
+      <label for="status" class="form-label">Status</label>
+      <select class="form-select" id="status" [formControl]="status">
+        <option selected disabled value="">Choose...</option>
+        <option *ngFor="let mStatus of merchantStatuses" [value]="mStatus">{{merchantStatus[mStatus].name}}</option>
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" class="form-control" id="password" [formControl]="password">
+    </div>
+
+    <div class="col-11">
+      <button class="btn btn-primary" type="button" (click)="save()" [disabled]="serverCallInProgress">Save</button>
+    </div>
+    <div class="col-1">
+      <button class="btn btn-warning" type="button" (click)="delete()" [disabled]="serverCallInProgress">Delete</button>
+    </div>
+  </form>
+
+  <div *ngIf="error" class="text-danger">{{error.reason}}</div>
+</div>

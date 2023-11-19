@@ -127,6 +127,17 @@ public class MerchantCrudServiceTest extends BaseTest {
 	}
 
 	@Test
+	void getMerchant() throws Exception {
+		new MerchantBuilder("merchant1@test.com").withName("name").withDescription("description").withTotalTransactionSum(new BigDecimal("1.01")).build();
+		Merchant merchant2 = new MerchantBuilder("merchant2@test.com").build();
+
+		MerchantDTO result = merchantCrudService.getMerchant(merchant2.getId());
+
+		assertThat(result, notNullValue());
+		assertThat(result.getEmail(), equalTo("merchant2@test.com"));
+	}
+
+	@Test
 	void delete_merchant() throws Exception {
 		Merchant merchant = new MerchantBuilder("merchant1@test.com").build();
 		new MerchantBuilder("merchant2@test.com").build();

@@ -1,0 +1,25 @@
+<navigation></navigation>
+
+<div class="container">
+  <div class="mb-3">Merchants list</div>
+
+  <div class="mb-3">
+    <div class="row">
+      <div class="col-3 fw-bold">Name</div>
+      <div class="col-3 fw-bold">Description</div>
+      <div class="col fw-bold">Email</div>
+      <div class="col fw-bold">Status</div>
+      <div class="col-1 fw-bold text-nowrap">Total sum</div>
+    </div>
+    <div *ngFor="let merchant of merchants" class="row">
+      <a class="col-3" [routerLink]="['/admin/merchants', merchant.id]">{{merchant.name}}</a>
+      <div class="col-3">{{merchant.description}}</div>
+      <div class="col">{{merchant.email}}</div>
+      <div class="col">{{merchantStatus[merchant.status].name}}</div>
+      <div class="col-1">{{merchant.totalTransactionSum || '-'}}</div>
+    </div>
+  </div>
+
+  <a routerLink="/admin/merchants/0" class="btn btn-primary">Create new merchant</a>
+
+</div>

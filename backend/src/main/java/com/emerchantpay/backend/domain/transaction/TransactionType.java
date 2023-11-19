@@ -17,17 +17,4 @@ public enum TransactionType {
 	public boolean canReference(TransactionType referenceType) {
 		return allowedReferenceType != null && referenceType != null && allowedReferenceType.contains(referenceType) || (allowedReferenceType == null && referenceType == null);
 	}
-
-	public static TransactionType getType(Transaction transaction) {
-		if (transaction instanceof AuthorizeTransaction) {
-			return TRANSACTION_AUTHORIZE;
-		} else if (transaction instanceof ChargeTransaction) {
-			return TRANSACTION_CHARGE;
-		} else if (transaction instanceof RefundTransaction) {
-			return TRANSACTION_REFUND;
-		} else if (transaction instanceof ReversalTransaction) {
-			return TRANSACTION_REVERSAL;
-		}
-		return null;
-	}
 }

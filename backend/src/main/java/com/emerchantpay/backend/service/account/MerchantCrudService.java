@@ -76,8 +76,15 @@ public class MerchantCrudService {
 		try {
 			repo.merchant.deleteById(id);
 		} catch (Throwable e) {
-			throw new InvalidMerchantException(e);
+			throw new InvalidMerchantException("Not allowed to delete merchant with transactions", e);
 		}
 	}
 
+	public MerchantDTO getMerchant(Long id) throws EntityNotFoundException {
+		if (id == null) {
+			throw new EntityNotFoundException("null merchant id");
+		}
+
+		return new MerchantDTO(repo.merchant.findById(id).orElseThrow(() -> new EntityNotFoundException("invalid id")));
+	}
 }

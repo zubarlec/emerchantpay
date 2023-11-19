@@ -29,7 +29,7 @@ public class TransactionController {
 	}
 
 	@GetMapping("/")
-	public ResponseEntity<ListWrapper<TransactionDTO>> getTransactions() {
+	public ResponseEntity<ListWrapper<TransactionDTO>> getAll() {
 		Account executor = authenticationService.getAuthenticatedAccount();
 
 		return ResponseEntity.ok(new ListWrapper<>(transactionService.getTransactions(executor)));

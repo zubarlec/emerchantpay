@@ -79,7 +79,7 @@ public class SecurityConfiguration {
 				.accessDeniedHandler(accessDeniedHandler())
 				.authenticationEntryPoint(authenticationEntryPoint()))
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers(antMatcher("/api/v1/auth/login/**")).permitAll()
+				.requestMatchers(antMatcher("/api/v1/auth/**")).permitAll()
 
 				.requestMatchers(antMatcher("/api/v1/merchants/**")).hasRole("ADMIN")
 				.requestMatchers(antMatcher("/api/v1/transaction/**")).hasAnyRole("ADMIN", "MERCHANT")

@@ -1,0 +1,66 @@
+<navigation></navigation>
+
+<div class="container">
+  <div class="mb-3">Transaction list</div>
+
+  <div class="mb-3">
+    <div class="row mb-3">
+      <div class="col fw-bold">ID</div>
+      <div class="col-2 fw-bold">Type, Status</div>
+      <div class="col-2 fw-bold">Reference ID</div>
+      <div class="col-1 fw-bold">Amount</div>
+    </div>
+    <div *ngFor="let transaction of transactions" class="row mb-2">
+      <div class="col">
+        <div>ID: <b>{{transaction.id}}</b>, uuid: {{transaction.uuid}}</div>
+        <div><i>Customer:</i> {{transaction.customerEmail}}, {{transaction.customerPhone}}</div>
+        <div><i>Merchant:</i> {{transaction.merchant?.email || '-'}}</div>
+      </div>
+      <div class="col-2">{{transactionType[transaction.type].name}}, {{transactionStatus[transaction.status].name}}</div>
+      <div class="col-2">{{transaction.referenceId}}</div>
+      <div class="col-1">{{transaction.amount || '-'}}</div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="authService.isMerchant">
+    <div class="mb-3">Create new transaction:</div>
+
+    <form class="row g-3">
+      <div class="col-md-4">
+        <label for="customerEmail" class="form-label">Customer email</label>
+        <input type="email" class="form-control" id="customerEmail" [formControl]="customerEmail" [ngClass]="{'is-invalid': customerEmail.invalid && customerEmail.touched, 'is-valid': customerEmail.valid && customerEmail.touched}">
+        <div class="invalid-feedback">
+          Invalid email.
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <label for="customerPhone" class="form-label">Customer phone</label>
+        <input type="text" class="form-control" id="customerPhone" [formControl]="customerPhone">
+      </div>
+
+      <div class="col-md-4">
+        <label for="referenceId" class="form-label">Reference ID</label>
+        <input type="number" class="form-control" id="referenceId" [formControl]="referenceId">
+      </div>
+
+      <div class="col-md-3">
+        <label for="type" class="form-label">Type</label>
+        <select class="form-select" id="type" [formControl]="type">
+          <option selected disabled value="">Choose...</option>
+          <option *ngFor="let tType of transactionTypes" [value]="tType">{{transactionType[tType].name}}</option>
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label for="amount" class="form-label">Amount</label>
+        <input type="number" class="form-control" id="amount" [formControl]="amount">
+      </div>
+
+      <div class="col-12">
+        <button type="button" class="btn btn-primary" (click)="submitTransaction()">Submit transaction</button>
+      </div>
+      <div *ngIf="error" class="text-danger">{{error.reason}}</div>
+    </form>
+  </ng-container>
+</div>
