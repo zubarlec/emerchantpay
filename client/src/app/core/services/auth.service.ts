@@ -30,13 +30,16 @@ export class AuthService {
     private localStorage: LocalStorageService,
   ) { }
 
-  reloadAuth(): Observable<AccountDTO | undefined> {
+  reloadAuth(): Observable<AccountDTO | boolean> {
     this.rootScope.jwt = this.localStorage.get(JWT_KEY);
     return this.loginProxy.getAuthenticatedAccount().pipe(
       tap(account => this.finalizeLogin(account)),
       catchError(error => {
-        this.finalizeLogin(undefined);
-        throw error;
+        if (error.status === 500 || error.status === 0) {
+          this.finalizeLogin(undefined);
+          throw error;
+        }
+        return this.logout();
       })
     );
   }
@@ -52,11 +55,11 @@ export class AuthService {
     );
   }
 
-  logout(): void {
+  logout(): Promise<boolean> {
     this.finalizeLogin(undefined);
     this.localStorage.clear();
     this.rootScope.jwt = undefined;
-    this.goLoginState();
+    return this.goLoginState();
   }
 
   private finalizeLogin(account?: AccountDTO): void {
@@ -83,8 +86,8 @@ export class AuthService {
     }
   }
 
-  goLoginState(queryParams?: Params): void {
-    this.router.navigate(['/'], {queryParams}).then(() => {});
+  goLoginState(queryParams?: Params): Promise<boolean> {
+    return this.router.navigate(['/'], {queryParams});
   }
 
   goHomeState(): void {

@@ -1,0 +1,4 @@
+FROM eclipse-temurin:17-jre-alpine
+COPY backend/target/*.jar app.jar
+COPY backend/import-accounts.csv import-accounts.csv
+ENTRYPOINT ["java", "-Dserver.port=8080", "-Dspring.profiles.active=main", "-jar", "/app.jar"]

@@ -35,7 +35,7 @@ export class EditMerchantComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const id = this.route.snapshot.params['id'];
+    const id = parseInt(this.route.snapshot.params['id']);
 
     if (id) {
       this.merchantsProxy.getOne(id).subscribe({
@@ -68,7 +68,7 @@ export class EditMerchantComponent implements OnInit {
         status: this.status.value
       },
       password: this.password.value
-    }).subscribe({next: result => {
+    }).subscribe({next: () => {
       this.serverCallInProgress = false;
       this.router.navigate(['/admin/merchants']).then(() => {});
     }, error: error => {

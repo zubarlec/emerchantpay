@@ -37,7 +37,7 @@
       <button class="btn btn-primary" type="button" (click)="save()" [disabled]="serverCallInProgress">Save</button>
     </div>
     <div class="col-1">
-      <button class="btn btn-warning" type="button" (click)="delete()" [disabled]="serverCallInProgress">Delete</button>
+      <button class="btn btn-warning" type="button" (click)="delete()" [disabled]="serverCallInProgress" *ngIf="merchant?.id">Delete</button>
     </div>
   </form>
 

@@ -1,0 +1,47 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile-backend
+    ports:
+      - 8080:8080
+    networks:
+      - emerchantpay-mysql-network
+    environment:
+      - spring.datasource.url=jdbc:mysql://mysqldb:3306/emerchantpay?allowPublicKeyRetrieval=true
+      - spring.datasource.username=emerchantpay
+      - spring.datasource.password=emerchantpay
+      - emerchantpay.import.csv.file=$IMPORT_FILE
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+
+  mysqldb:
+    image: mysql:8.0
+    healthcheck:
+      test: mysql --version
+      timeout: 10s
+      retries: 5
+    ports:
+      - 3306:3306
+    networks:
+      - emerchantpay-mysql-network
+    environment:
+      MYSQL_DATABASE: emerchantpay
+      MYSQL_USER: emerchantpay
+      MYSQL_PASSWORD: emerchantpay
+      MYSQL_ROOT_PASSWORD: root
+      
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile-frontend
+    ports:
+      - 4200:4200
+    networks:
+      - emerchantpay-mysql-network
+    depends_on:
+      - backend
+
+networks:
+  emerchantpay-mysql-network:
