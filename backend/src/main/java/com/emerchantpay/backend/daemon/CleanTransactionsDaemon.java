@@ -1,9 +1,12 @@
 package com.emerchantpay.backend.daemon;
 
+import java.util.Set;
+
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.emerchantpay.backend.configuration.ConfigurationProperties;
 import com.emerchantpay.backend.repository.RepositoryRegistry;
 
 @Service
@@ -17,9 +20,15 @@ public class CleanTransactionsDaemon {
 	}
 
 	@Transactional
-	@Scheduled(cron = "0 0 * * * *") // sec min hour day-of-month month day-of-week
+	@Scheduled(cron = "0 */30 * * * *") // "sec min hour day-of-month month day-of-week" - runs every 30 minutes
 	void deleteExpiredTransactions() {
-		repo.transaction.deleteByTimestampLessThan(System.currentTimeMillis() - MILLIS_PER_HOUR);
+		ConfigurationProperties.LOG.info("CleanTransactionsDaemon run.");
+
+		long timestamp = System.currentTimeMillis() - MILLIS_PER_HOUR;
+		Set<Long> affectedMerchantIds = repo.transaction.findMerchantIdsByTimestampLessThan(timestamp);
+		repo.transaction.deleteByTimestampLessThan(timestamp);
+
+		repo.merchant.updateTotalSum(affectedMerchantIds);
 	}
 
 }

@@ -4,12 +4,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.emerchantpay.backend.configuration.ConfigurationProperties;
 import com.emerchantpay.backend.domain.account.Account;
 import com.emerchantpay.backend.dto.transaction.TransactionDTO;
 import com.emerchantpay.backend.service.exception.EntityNotFoundException;
 import com.emerchantpay.backend.service.exception.InvalidMerchantException;
 import com.emerchantpay.backend.service.exception.InvalidTransactionException;
 import com.emerchantpay.backend.service.transaction.TransactionService;
+import com.emerchantpay.backend.util.JsonUtil;
 import com.emerchantpay.backend.web.dto.ListWrapper;
 import com.emerchantpay.backend.web.security.AuthenticationService;
 
@@ -38,6 +40,8 @@ public class TransactionController {
 	@PostMapping("/")
 	public ResponseEntity<TransactionDTO> submitTransaction(@NotNull @RequestBody TransactionDTO transaction) throws InvalidMerchantException, InvalidTransactionException, EntityNotFoundException {
 		Account executor = authenticationService.getAuthenticatedAccount();
+
+		ConfigurationProperties.LOG.info(String.format("Submit transaction: %s, executor: %d", JsonUtil.toJson(transaction), executor.getId()));
 
 		return ResponseEntity.ok(transactionService.submitTransaction(transaction, executor));
 	}

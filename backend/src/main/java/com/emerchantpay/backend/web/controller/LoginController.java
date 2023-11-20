@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.emerchantpay.backend.configuration.ConfigurationProperties;
 import com.emerchantpay.backend.domain.account.Account;
 import com.emerchantpay.backend.domain.account.Admin;
 import com.emerchantpay.backend.domain.account.Merchant;
@@ -27,6 +28,8 @@ public class LoginController {
 
 	@PostMapping("/login")
 	public ResponseEntity<ValueWrapper<String>> login(@RequestParam("username") String username, @RequestParam("password") String password) {
+		ConfigurationProperties.LOG.info(String.format("Login %s", username));
+
 		return ResponseEntity.ok(new ValueWrapper<>(authenticationService.authenticate(username, password)));
 	}
 

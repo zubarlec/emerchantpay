@@ -4,11 +4,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.emerchantpay.backend.configuration.ConfigurationProperties;
 import com.emerchantpay.backend.dto.account.MerchantDTO;
 import com.emerchantpay.backend.service.account.MerchantCrudService;
 import com.emerchantpay.backend.service.exception.DuplicateMailException;
 import com.emerchantpay.backend.service.exception.EntityNotFoundException;
 import com.emerchantpay.backend.service.exception.InvalidMerchantException;
+import com.emerchantpay.backend.util.JsonUtil;
 import com.emerchantpay.backend.web.dto.ListWrapper;
 import com.emerchantpay.backend.web.dto.ValueWrapper;
 import com.emerchantpay.backend.web.dto.merchant.UpdateMerchantRequestDTO;
@@ -38,11 +40,15 @@ public class MerchantsController {
 
 	@PostMapping("/")
 	public ResponseEntity<MerchantDTO> createOrUpdate(@RequestBody @NotNull UpdateMerchantRequestDTO merchantRequestDTO) throws DuplicateMailException, InvalidMerchantException {
+		ConfigurationProperties.LOG.info(String.format("Create or update merchant: %s", JsonUtil.toJson(merchantRequestDTO.getMerchant())));
+
 		return ResponseEntity.ok(merchantCrudService.createOrUpdateMerchant(merchantRequestDTO.getMerchant(), merchantRequestDTO.getPassword()));
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<ValueWrapper<Boolean>> delete(@PathVariable @NotNull Long id) throws InvalidMerchantException, EntityNotFoundException {
+		ConfigurationProperties.LOG.info(String.format("Delete merchant: %d", id));
+
 		merchantCrudService.deleteMerchant(id);
 		return ResponseEntity.ok(new ValueWrapper<>(true));
 	}
