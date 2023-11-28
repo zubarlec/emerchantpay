@@ -15,11 +15,12 @@ import com.emerchantpay.backend.domain.account.Merchant;
 import com.emerchantpay.backend.domain.builder.account.MerchantBuilder;
 import com.emerchantpay.backend.domain.builder.transaction.ChargeTransactionBuilder;
 import com.emerchantpay.backend.domain.transaction.Transaction;
+import com.emerchantpay.backend.service.transaction.TransactionDeletionService;
 
-public class CleanTransactionsDaemonTest extends BaseTest {
+public class TransactionDeletionServiceTest extends BaseTest {
 
 	@Autowired
-	private CleanTransactionsDaemon cleanTransactionsDaemon;
+	private TransactionDeletionService transactionDeletionService;
 
 	@Test
 	void delete_old_transactions() {
@@ -31,7 +32,7 @@ public class CleanTransactionsDaemonTest extends BaseTest {
 
 		long initialCount = repo.transaction.count();
 
-		cleanTransactionsDaemon.deleteExpiredTransactions();
+		transactionDeletionService.deleteExpiredTransactions();
 
 		assertThat(repo.transaction.count(), equalTo(initialCount - 2));
 		assertThat(repo.transaction.findById(t1.getId()).orElse(null), notNullValue());
@@ -42,7 +43,7 @@ public class CleanTransactionsDaemonTest extends BaseTest {
 		merchant = repo.merchant.findById(merchant.getId()).orElseThrow();
 		assertThat(merchant.getTotalTransactionSum(), equalTo(new BigDecimal("3.00")));
 
-		cleanTransactionsDaemon.deleteExpiredTransactions();
+		transactionDeletionService.deleteExpiredTransactions();
 		assertThat(repo.transaction.count(), equalTo(initialCount - 2));
 	}
 }
