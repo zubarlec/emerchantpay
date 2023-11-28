@@ -39,10 +39,17 @@ public class MerchantsController {
 	}
 
 	@PostMapping("/")
-	public ResponseEntity<MerchantDTO> createOrUpdate(@RequestBody @NotNull UpdateMerchantRequestDTO merchantRequestDTO) throws DuplicateMailException, InvalidMerchantException {
-		ConfigurationProperties.LOG.info(String.format("Create or update merchant: %s", JsonUtil.toJson(merchantRequestDTO.getMerchant())));
+	public ResponseEntity<MerchantDTO> create(@RequestBody @NotNull UpdateMerchantRequestDTO merchantRequestDTO) throws DuplicateMailException, InvalidMerchantException {
+		ConfigurationProperties.LOG.info(String.format("Create merchant: %s", JsonUtil.toJson(merchantRequestDTO.getMerchant())));
 
-		return ResponseEntity.ok(merchantCrudService.createOrUpdateMerchant(merchantRequestDTO.getMerchant(), merchantRequestDTO.getPassword()));
+		return ResponseEntity.ok(merchantCrudService.createMerchant(merchantRequestDTO.getMerchant(), merchantRequestDTO.getPassword()));
+	}
+
+	@PatchMapping("/")
+	public ResponseEntity<MerchantDTO> update(@RequestBody @NotNull UpdateMerchantRequestDTO merchantRequestDTO) throws DuplicateMailException, InvalidMerchantException {
+		ConfigurationProperties.LOG.info(String.format("Update merchant: %s", JsonUtil.toJson(merchantRequestDTO.getMerchant())));
+
+		return ResponseEntity.ok(merchantCrudService.updateMerchant(merchantRequestDTO.getMerchant(), merchantRequestDTO.getPassword()));
 	}
 
 	@DeleteMapping("/{id}")

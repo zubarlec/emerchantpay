@@ -59,7 +59,8 @@ export class EditMerchantComponent implements OnInit {
     }
 
     this.serverCallInProgress = true;
-    this.merchantsProxy.createOrUpdate({
+    const methodActual = this.merchant?.id ? this.merchantsProxy.updateBind : this.merchantsProxy.createBind;
+    methodActual({
       merchant: {
         ...this.merchant,
         email: this.email.value,

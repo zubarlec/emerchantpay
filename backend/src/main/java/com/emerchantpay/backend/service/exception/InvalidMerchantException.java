@@ -12,4 +12,8 @@ public class InvalidMerchantException extends Exception {
 	public InvalidMerchantException(Throwable cause) {
 		super(cause);
 	}
+
+	public InvalidMerchantException(String message) {
+		super(message);
+	}
 }

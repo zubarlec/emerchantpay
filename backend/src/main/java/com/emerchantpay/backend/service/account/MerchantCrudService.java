@@ -9,7 +9,8 @@ import com.emerchantpay.backend.service.exception.InvalidMerchantException;
 
 public interface MerchantCrudService {
 
-	MerchantDTO createOrUpdateMerchant(MerchantDTO merchantDTO, String password) throws InvalidMerchantException, DuplicateMailException;
+	MerchantDTO createMerchant(MerchantDTO merchantDTO, String password) throws InvalidMerchantException, DuplicateMailException;
+	MerchantDTO updateMerchant(MerchantDTO merchantDTO, String password) throws InvalidMerchantException, DuplicateMailException;
 
 	List<MerchantDTO> getMerchants();
 

@@ -43,7 +43,7 @@ public class MerchantCrudServiceTest extends BaseTest {
 
 	@Test
 	void create_merchant_all_fields() throws Exception {
-		MerchantDTO result = merchantCrudService.createOrUpdateMerchant(merchantDTO, "pass");
+		MerchantDTO result = merchantCrudService.createMerchant(merchantDTO, "pass");
 
 		assertThat(result, notNullValue());
 		assertThat(result.getId(), notNullValue());
@@ -62,7 +62,7 @@ public class MerchantCrudServiceTest extends BaseTest {
 		merchantDTO = new MerchantDTO();
 		merchantDTO.setEmail("merchant@test.com");
 
-		MerchantDTO result = merchantCrudService.createOrUpdateMerchant(merchantDTO, null);
+		MerchantDTO result = merchantCrudService.createMerchant(merchantDTO, null);
 
 		assertThat(result, notNullValue());
 		assertThat(result.getEmail(), equalTo(merchantDTO.getEmail()));
@@ -72,18 +72,27 @@ public class MerchantCrudServiceTest extends BaseTest {
 
 	@Test
 	void fail_to_create_merchant_with_invalid_email() throws Exception {
-		merchantCrudService.createOrUpdateMerchant(merchantDTO, null);
+		merchantCrudService.createMerchant(merchantDTO, null);
 
-		assertThrows(DuplicateMailException.class, () -> merchantCrudService.createOrUpdateMerchant(merchantDTO, null));
+		assertThrows(DuplicateMailException.class, () -> merchantCrudService.createMerchant(merchantDTO, null));
 
 		merchantDTO.setEmail(null);
-		assertThrows(InvalidMerchantException.class, () -> merchantCrudService.createOrUpdateMerchant(merchantDTO, null));
+		assertThrows(InvalidMerchantException.class, () -> merchantCrudService.createMerchant(merchantDTO, null));
 
 		merchantDTO.setEmail("");
-		assertThrows(InvalidMerchantException.class, () -> merchantCrudService.createOrUpdateMerchant(merchantDTO, null));
+		assertThrows(InvalidMerchantException.class, () -> merchantCrudService.createMerchant(merchantDTO, null));
 
 		merchantDTO.setEmail("invalid-email");
-		assertThrows(InvalidMerchantException.class, () -> merchantCrudService.createOrUpdateMerchant(merchantDTO, null));
+		assertThrows(InvalidMerchantException.class, () -> merchantCrudService.createMerchant(merchantDTO, null));
+	}
+
+	@Test
+	void fail_to_create_merchant_with_id() throws Exception {
+		MerchantDTO existing = merchantCrudService.createMerchant(merchantDTO, "pass");
+
+		merchantDTO.setId(existing.getId());
+		merchantDTO.setEmail("another@test.com");
+		assertThrows(InvalidMerchantException.class, () -> merchantCrudService.createMerchant(merchantDTO, null));
 	}
 
 	@Test
@@ -108,10 +117,15 @@ public class MerchantCrudServiceTest extends BaseTest {
 
 	@Test
 	void update_merchant_password() throws Exception {
-		MerchantDTO result = merchantCrudService.createOrUpdateMerchant(merchantDTO, "pass");
-		result = merchantCrudService.createOrUpdateMerchant(result, "new pass");
+		MerchantDTO result = merchantCrudService.createMerchant(merchantDTO, "pass");
+		result = merchantCrudService.updateMerchant(result, "new pass");
 
 		assertPassword(result.getId(), "new pass");
+	}
+
+	@Test
+	void fail_to_update_merchant_without_id() {
+		assertThrows(InvalidMerchantException.class, () -> merchantCrudService.updateMerchant(merchantDTO, null));
 	}
 
 	@Test
@@ -162,13 +176,13 @@ public class MerchantCrudServiceTest extends BaseTest {
 	}
 
 	private <T> void assertUpdateMerchantSingleField(Function<MerchantDTO, T> fieldGetter, BiConsumer<MerchantDTO, T> fieldSetter, T newValue) throws Exception {
-		MerchantDTO result = merchantCrudService.createOrUpdateMerchant(merchantDTO, null);
+		MerchantDTO result = merchantCrudService.createMerchant(merchantDTO, null);
 
 		MerchantDTO updateRequest = new MerchantDTO();
 		updateRequest.setId(result.getId());
 		fieldSetter.accept(updateRequest, newValue);
 
-		MerchantDTO updated = merchantCrudService.createOrUpdateMerchant(updateRequest, null);
+		MerchantDTO updated = merchantCrudService.updateMerchant(updateRequest, null);
 
 		fieldSetter.accept(result, fieldGetter.apply(updated));
 

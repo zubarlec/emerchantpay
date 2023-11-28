@@ -33,6 +33,12 @@ export class ApiCallService {
     return this.http.post<T>(this.rootScope.apiBaseUrl + url, body, {headers});
   }
 
+  patch<T>(url: string, body?: object): Observable<T> {
+    const headers = new HttpHeaders({'Content-Type':  'application/json'});
+
+    return this.http.patch<T>(this.rootScope.apiBaseUrl + url, body, {headers});
+  }
+
   delete<T>(url: string, body?: object): Observable<T> {
     return this.http.delete<T>(this.rootScope.apiBaseUrl + url, body);
   }

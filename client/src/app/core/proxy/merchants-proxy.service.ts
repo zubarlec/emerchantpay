@@ -15,6 +15,9 @@ export class MerchantsProxyService {
     private apiCall: ApiCallService
   ) {}
 
+  createBind = this.create.bind(this);
+  updateBind = this.update.bind(this);
+
   getAll(): Observable<ListWrapper<MerchantDTO>> {
     return this.apiCall.get('merchants/');
   }
@@ -23,8 +26,12 @@ export class MerchantsProxyService {
     return this.apiCall.get('merchants/' + id);
   }
 
-  createOrUpdate(updateRequest: UpdateMerchantRequestDTO): Observable<MerchantDTO> {
+  create(updateRequest: UpdateMerchantRequestDTO): Observable<MerchantDTO> {
     return this.apiCall.post('merchants/', updateRequest);
+  }
+
+  update(updateRequest: UpdateMerchantRequestDTO): Observable<MerchantDTO> {
+    return this.apiCall.patch('merchants/', updateRequest);
   }
 
   delete(id: number): Observable<ValueWrapper<boolean>> {

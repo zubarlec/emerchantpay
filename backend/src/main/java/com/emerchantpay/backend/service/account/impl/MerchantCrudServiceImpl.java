@@ -32,8 +32,23 @@ public class MerchantCrudServiceImpl implements MerchantCrudService {
 
 	@Override
 	@Transactional(rollbackFor = {InvalidMerchantException.class, DuplicateMailException.class})
-	public MerchantDTO createOrUpdateMerchant(MerchantDTO merchantDTO, String password) throws InvalidMerchantException, DuplicateMailException {
+	public MerchantDTO createMerchant(MerchantDTO merchantDTO, String password) throws InvalidMerchantException, DuplicateMailException {
+		if (merchantDTO.getId() != null) {
+			throw new InvalidMerchantException("Id must be null");
+		}
+		return createOrUpdateMerchant(merchantDTO, password);
+	}
 
+	@Override
+	@Transactional(rollbackFor = {InvalidMerchantException.class, DuplicateMailException.class})
+	public MerchantDTO updateMerchant(MerchantDTO merchantDTO, String password) throws InvalidMerchantException, DuplicateMailException {
+		if (merchantDTO.getId() == null) {
+			throw new InvalidMerchantException("Id must not be null");
+		}
+		return createOrUpdateMerchant(merchantDTO, password);
+	}
+
+	private MerchantDTO createOrUpdateMerchant(MerchantDTO merchantDTO, String password) throws InvalidMerchantException, DuplicateMailException {
 		MerchantBuilder builder;
 		if (merchantDTO.getId() != null) {
 			Merchant existing = repo.merchant.findById(merchantDTO.getId()).orElse(null);
