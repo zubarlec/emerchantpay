@@ -14,7 +14,7 @@ public class JwtAdapter {
 	private final String subject;
 	private final Date expirationDate;
 
-	JwtAdapter(String token, SecretKey secretKey) {
+	public JwtAdapter(String token, SecretKey secretKey) {
 		Claims claims = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
 
 		subject = claims.getSubject();

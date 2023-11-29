@@ -3,6 +3,8 @@ package com.emerchantpay.backend.dto.transaction;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import org.hibernate.Hibernate;
+
 import com.emerchantpay.backend.domain.transaction.AmountTransaction;
 import com.emerchantpay.backend.domain.transaction.Transaction;
 import com.emerchantpay.backend.domain.transaction.TransactionStatus;
@@ -41,6 +43,7 @@ public class TransactionDTO {
 		type = transaction.getType();
 		merchant = new MerchantDTO(transaction.getMerchant());
 
+		transaction = (Transaction) Hibernate.unproxy(transaction);
 		if (transaction instanceof AmountTransaction) {
 			amount = ((AmountTransaction) transaction).getAmount();
 		}

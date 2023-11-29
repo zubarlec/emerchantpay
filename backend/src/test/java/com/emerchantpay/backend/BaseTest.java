@@ -5,6 +5,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
@@ -26,6 +27,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @ComponentScan("com.emerchantpay.backend")
 @EnableSpringConfigured
 @AutoConfigureTestEntityManager
+@AutoConfigureMockMvc
 @TestPropertySources({
 	@TestPropertySource("classpath:test.properties")
 })
