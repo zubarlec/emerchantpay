@@ -26,6 +26,13 @@ public class LoginController {
 		this.authenticationService = authenticationService;
 	}
 
+	/**
+	 * Generate a JWT login token for a user with the given username and password.
+	 *
+	 * @param username The username of the user.
+	 * @param password The password of the user.
+	 * @return A ResponseEntity containing a ValueWrapper with the authentication result.
+	 */
 	@PostMapping("/login")
 	public ResponseEntity<ValueWrapper<String>> login(@RequestParam("username") String username, @RequestParam("password") String password) {
 		ConfigurationProperties.LOG.info(String.format("Login %s", username));
@@ -33,6 +40,11 @@ public class LoginController {
 		return ResponseEntity.ok(new ValueWrapper<>(authenticationService.authenticate(username, password)));
 	}
 
+	/**
+	 * Retrieve the account details of the currently authenticated user.
+	 *
+	 * @return A ResponseEntity containing the AccountDTO object representing the account details.
+	 */
 	@GetMapping("/account")
 	public ResponseEntity<AccountDTO> account() {
 		Account account = authenticationService.getAuthenticatedAccount();

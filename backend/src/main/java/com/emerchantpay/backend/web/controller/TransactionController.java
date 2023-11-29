@@ -30,6 +30,16 @@ public class TransactionController {
 		this.transactionService = transactionService;
 	}
 
+	/**
+	 * Retrieve all transactions for the authenticated account.
+	 * <ul>
+	 *     <li>If the authenticated user is admin, all transactions are returned.</li>
+	 *     <li>If the authenticated user is a merchant, all transactions that belong to that merchant are returned.</li>
+	 *     <li>The resulting transactions are sorted by timestamp in descending order for merchants.</li>
+	 * </ul>
+	 *
+	 * @return a ResponseEntity containing a ListWrapper of TransactionDTOs
+	 */
 	@GetMapping("/")
 	public ResponseEntity<ListWrapper<TransactionDTO>> getAll() {
 		Account executor = authenticationService.getAuthenticatedAccount();
@@ -37,6 +47,19 @@ public class TransactionController {
 		return ResponseEntity.ok(new ListWrapper<>(transactionService.getTransactions(executor)));
 	}
 
+	/**
+	 * Submit a transaction for processing.
+	 * <ul>
+	 *     <li>If the authenticated user is admin, a {@code merchant.id} is required to be provided.</li>
+	 *     <li>If the authenticated user is a merchant, the transaction is created for the merchant.</li>
+	 * </ul>
+	 *
+	 * @param transaction the TransactionDTO object representing the transaction to be submitted
+	 * @return a ResponseEntity containing the TransactionDTO object representing the submitted transaction
+	 * @throws InvalidMerchantException if the merchant is invalid
+	 * @throws InvalidTransactionException if the transaction is invalid
+	 * @throws EntityNotFoundException if the reference transaction is not found
+	 */
 	@PostMapping("/")
 	public ResponseEntity<TransactionDTO> submitTransaction(@NotNull @RequestBody TransactionDTO transaction) throws InvalidMerchantException, InvalidTransactionException, EntityNotFoundException {
 		Account executor = authenticationService.getAuthenticatedAccount();
